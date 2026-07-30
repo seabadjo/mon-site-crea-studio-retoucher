@@ -1383,7 +1383,7 @@ footer {
   <div class="footer-logo"><span>Créa</span>Studio</div>
   <div class="footer-copy">
     © 2026 Créa Studio. Tous droits réservés.
-    <a href="admin/" class="footer-admin">Admin</a>
+    <a href="admin.html" class="footer-admin">Admin</a>
   </div>
   <div class="footer-social">
     <a href="#">Instagram</a>
@@ -1443,7 +1443,7 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 
 async function loadTestimonials() {
   try {
-    const response = await fetch('http://localhost:3001/api/testimonials');
+    const response = await fetch('https://ton-backend.com/api/testimonials');
     const testimonials = await response.json();
     const track = document.getElementById('testimonialsTrack');
     if (!track) return;
