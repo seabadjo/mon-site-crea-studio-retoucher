@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Créa Studio | Faire un devis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --dark: #080808;
+  --dark-2: #101010;
+  --dark-3: #181818;
+  --dark-4: #222222;
+  --cream: #f2ede4;
+  --orange: #e85d26;
+  --orange-light: #ff7a47;
+  --orange-dim: rgba(232, 93, 38, 0.12);
+  --orange-border: rgba(232, 93, 38, 0.35);
+  --muted: rgba(242, 237, 228, 0.55);
+  --muted-2: rgba(242, 237, 228, 0.3);
+  --border: rgba(242, 237, 228, 0.07);
+  --border-2: rgba(242, 237, 228, 0.12);
+  --green: #22c55e;
+  --green-dim: rgba(34, 197, 94, 0.1);
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--dark);
+  color: var(--cream);
+  min-height: 100vh;
+  cursor: none;
+  overflow-x: hidden;
+}
+a { text-decoration: none; color: inherit; }
+button { border: none; background: none; font-family: inherit; cursor: none; }
+
+/* CURSOR */
+.cursor { position: fixed; width: 10px; height: 10px; background: var(--orange); border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); transition: width .25s, height .25s; }
+.cursor-ring { position: fixed; width: 36px; height: 36px; border: 1px solid rgba(232,93,38,.4); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: transform .1s ease-out, width .25s, height .25s, border-color .25s; }
+.cursor.big { width: 5px; height: 5px; }
+.cursor-ring.big { width: 52px; height: 52px; border-color: var(--orange); }
+
+/* NOISE */
+body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E"); pointer-events: none; z-index: 9997; opacity: .35; }
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(8,8,8,.95); backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 18px 48px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -.03em; }
+.logo span { color: var(--orange); }
+.back-link { font-size: 13px; color: var(--muted); display: flex; align-items: center; gap: 8px; transition: color .3s; }
+.back-link:hover { color: var(--cream); }
+.back-link svg { width: 16px; height: 16px; }
+
+/* LAYOUT */
+.page { display: grid; grid-template-columns: 1fr 380px; min-height: calc(100vh - 61px); }
+
+/* FORM SIDE */
+.form-side {
+  padding: 60px 56px;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+}
+
+/* SUMMARY SIDE */
+.summary-side {
+  position: sticky; top: 61px; height: calc(100vh - 61px);
+  background: var(--dark-2);
+  overflow-y: auto;
+  display: flex; flex-direction: column;
+}
+
+/* STEPS */
+.steps-nav {
+  display: flex; gap: 0;
+  margin-bottom: 52px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0;
+}
+.step-tab {
+  flex: 1; padding: 12px 8px 14px;
+  font-size: 11px; font-weight: 500;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--muted-2);
+  border-bottom: 2px solid transparent;
+  transition: all .3s; text-align: center;
+  position: relative; top: 1px;
+}
+.step-tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+.step-tab.done { color: var(--muted); }
+.step-tab.done::after { content: '✓'; margin-left: 6px; color: var(--green); }
+
+/* STEP PANELS */
+.step-panel { display: none; animation: stepIn .4s cubic-bezier(.16,1,.3,1); }
+.step-panel.active { display: block; }
+@keyframes stepIn { from { opacity:0; transform: translateX(20px); } to { opacity:1; transform: translateX(0); } }
+
+.panel-title {
+  font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800;
+  letter-spacing: -.03em; line-height: 1.1; margin-bottom: 8px;
+}
+.panel-title span { color: var(--orange); }
+.panel-sub { font-size: 14px; color: var(--muted); margin-bottom: 40px; line-height: 1.6; }
+
+/* FIELD */
+.field { margin-bottom: 24px; }
+.field label { display: block; font-size: 11px; font-weight: 500; letter-spacing: .15em; text-transform: uppercase; color: var(--muted-2); margin-bottom: 10px; }
+.field input, .field textarea, .field select {
+  width: 100%; background: var(--dark-3); border: 1px solid var(--border-2);
+  color: var(--cream); padding: 14px 18px; font-family: 'DM Sans', sans-serif;
+  font-size: 14px; border-radius: 6px; transition: border-color .3s, box-shadow .3s; outline: none; appearance: none;
+}
+.field input:focus, .field textarea:focus, .field select:focus {
+  border-color: var(--orange); box-shadow: 0 0 0 3px var(--orange-dim);
+}
+.field textarea { resize: vertical; min-height: 100px; }
+.field input::placeholder, .field textarea::placeholder { color: var(--muted-2); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* SERVICE CARDS */
+.service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px; }
+.service-pick {
+  position: relative; padding: 20px 18px; border-radius: 8px;
+  border: 1px solid var(--border-2); background: var(--dark-3);
+  transition: all .3s; cursor: none; user-select: none;
+}
+.service-pick:hover { border-color: var(--border); background: var(--dark-4); }
+.service-pick.selected { border-color: var(--orange-border); background: var(--orange-dim); }
+.service-pick input[type=checkbox] { position: absolute; opacity: 0; pointer-events: none; }
+.service-pick-icon { font-size: 22px; margin-bottom: 10px; }
+.service-pick-name { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: -.01em; margin-bottom: 4px; }
+.service-pick-price { font-size: 12px; color: var(--orange); font-weight: 500; }
+.service-pick-check {
+  position: absolute; top: 12px; right: 12px;
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 1px solid var(--border-2); background: var(--dark-4);
+  display: flex; align-items: center; justify-content: center;
+  transition: all .3s;
+}
+.service-pick.selected .service-pick-check { background: var(--orange); border-color: var(--orange); }
+.service-pick-check svg { width: 11px; height: 11px; stroke: var(--dark); stroke-width: 2.5; opacity: 0; transition: opacity .2s; }
+.service-pick.selected .service-pick-check svg { opacity: 1; }
+
+/* OPTIONS (radio-like) */
+.option-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px; }
+.option-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 18px; border-radius: 8px;
+  border: 1px solid var(--border-2); background: var(--dark-3);
+  transition: all .3s; cursor: none; user-select: none;
+}
+.option-item:hover { border-color: var(--border); background: var(--dark-4); }
+.option-item.selected { border-color: var(--orange-border); background: var(--orange-dim); }
+.option-radio {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 1px solid var(--border-2); flex-shrink: 0;
+  position: relative; transition: all .3s;
+}
+.option-item.selected .option-radio { border-color: var(--orange); }
+.option-radio::after {
+  content: ''; position: absolute; inset: 4px;
+  border-radius: 50%; background: var(--orange);
+  transform: scale(0); transition: transform .2s cubic-bezier(.16,1,.3,1);
+}
+.option-item.selected .option-radio::after { transform: scale(1); }
+.option-text { flex: 1; }
+.option-name { font-size: 14px; font-weight: 500; }
+.option-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.option-price { font-size: 13px; color: var(--orange); font-weight: 500; flex-shrink: 0; }
+
+/* RANGE SLIDER */
+.range-wrap { margin-bottom: 8px; }
+.range-labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted-2); margin-bottom: 10px; }
+.range-val { font-size: 22px; font-weight: 700; font-family: 'Syne', sans-serif; color: var(--cream); text-align: center; margin-bottom: 12px; }
+.range-val span { color: var(--orange); }
+input[type=range] {
+  -webkit-appearance: none; width: 100%; height: 3px;
+  background: var(--border-2); border-radius: 3px; outline: none;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 20px; height: 20px;
+  border-radius: 50%; background: var(--orange); cursor: none;
+  box-shadow: 0 0 0 4px var(--orange-dim);
+  transition: box-shadow .2s;
+}
+input[type=range]:hover::-webkit-slider-thumb { box-shadow: 0 0 0 8px var(--orange-dim); }
+
+/* UPLOAD */
+.upload-zone {
+  border: 1.5px dashed var(--border-2); border-radius: 8px;
+  padding: 36px 24px; text-align: center;
+  transition: all .3s; cursor: none;
+}
+.upload-zone:hover { border-color: var(--orange-border); background: var(--orange-dim); }
+.upload-icon { font-size: 32px; margin-bottom: 12px; opacity: .5; }
+.upload-text { font-size: 13px; color: var(--muted); }
+.upload-text strong { color: var(--cream); }
+
+/* NAV BUTTONS */
+.step-nav { display: flex; gap: 12px; margin-top: 48px; }
+.btn-next {
+  flex: 1; background: var(--orange); color: var(--dark);
+  padding: 16px 28px; border-radius: 6px; font-weight: 700;
+  font-size: 14px; letter-spacing: .04em; text-transform: uppercase;
+  font-family: 'DM Sans', sans-serif; transition: background .3s, transform .2s;
+}
+.btn-next:hover { background: var(--orange-light); transform: translateY(-2px); }
+.btn-prev {
+  padding: 16px 24px; border-radius: 6px; font-weight: 500;
+  font-size: 14px; color: var(--muted); border: 1px solid var(--border-2);
+  font-family: 'DM Sans', sans-serif; transition: all .3s;
+}
+.btn-prev:hover { color: var(--cream); border-color: var(--border); }
+
+/* SECTION HEADER */
+.field-section { font-size: 11px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: var(--orange); margin: 32px 0 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+
+/* SUMMARY SIDE */
+.summary-header {
+  padding: 28px 28px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.summary-header-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--muted-2); }
+.summary-client { margin-top: 14px; }
+.summary-client-name { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -.02em; min-height: 28px; }
+.summary-client-co { font-size: 13px; color: var(--muted); margin-top: 3px; min-height: 18px; }
+
+.summary-body { padding: 24px 28px; flex: 1; }
+.summary-section-label { font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted-2); margin-bottom: 12px; margin-top: 20px; }
+.summary-section-label:first-child { margin-top: 0; }
+.summary-service-item {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 10px 14px; background: var(--dark-3); border-radius: 6px;
+  margin-bottom: 6px; border: 1px solid var(--border);
+}
+.summary-service-name { font-size: 13px; font-weight: 500; }
+.summary-service-price { font-size: 13px; color: var(--orange); font-weight: 600; flex-shrink: 0; margin-left: 8px; }
+.summary-empty { font-size: 13px; color: var(--muted-2); font-style: italic; padding: 10px 0; }
+
+.summary-info-row {
+  display: flex; justify-content: space-between; font-size: 13px;
+  padding: 6px 0; border-bottom: 1px solid var(--border);
+}
+.summary-info-row:last-child { border: none; }
+.summary-info-label { color: var(--muted); }
+.summary-info-val { font-weight: 500; }
+
+.summary-footer { padding: 24px 28px; border-top: 1px solid var(--border); background: var(--dark-2); }
+.summary-subtotal { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+.summary-total-row { display: flex; justify-content: space-between; align-items: baseline; }
+.summary-total-label { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted-2); }
+.summary-total { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; letter-spacing: -.04em; }
+.summary-total span { color: var(--orange); }
+.summary-note { font-size: 11px; color: var(--muted-2); margin-top: 10px; line-height: 1.5; }
+
+/* STEP INDICATOR */
+.step-progress { display: flex; gap: 6px; margin-bottom: 40px; }
+.step-dot { height: 3px; border-radius: 3px; background: var(--border-2); flex: 1; transition: background .4s; }
+.step-dot.active { background: var(--orange); }
+.step-dot.done { background: rgba(232,93,38,.35); }
+
+/* SUCCESS SCREEN */
+.success-screen { display: none; text-align: center; padding: 80px 40px; }
+.success-screen.show { display: block; animation: stepIn .5s ease; }
+.success-icon {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: var(--green-dim); border: 1px solid rgba(34,197,94,.25);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 28px;
+}
+.success-icon svg { width: 36px; height: 36px; stroke: var(--green); stroke-width: 2; }
+.success-title { font-family: 'Syne', sans-serif; font-size: 32px; font-weight: 800; letter-spacing: -.03em; margin-bottom: 16px; }
+.success-text { font-size: 15px; color: var(--muted); line-height: 1.7; max-width: 440px; margin: 0 auto 36px; }
+.success-ref {
+  display: inline-block; background: var(--dark-3); border: 1px solid var(--border-2);
+  padding: 14px 28px; border-radius: 6px; font-family: 'Syne', sans-serif;
+  font-size: 18px; font-weight: 700; letter-spacing: .08em; color: var(--orange); margin-bottom: 36px;
+}
+.btn-new { background: var(--dark-3); border: 1px solid var(--border-2); color: var(--muted); padding: 12px 28px; border-radius: 6px; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; transition: all .3s; }
+.btn-new:hover { color: var(--cream); border-color: var(--border); }
+
+@media (max-width: 1024px) {
+  .page { grid-template-columns: 1fr; }
+  .summary-side { position: static; height: auto; }
+  .form-side { padding: 40px 24px; border-right: none; }
+  nav { padding: 16px 24px; }
+  .service-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .form-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="ring"></div>
+
+<nav>
+  <div class="logo"><span>Créa</span>Studio</div>
+  <a href="crea-studio.html" class="back-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Retour au site
+  </a>
+</nav>
+
+<div class="page">
+
+  <!-- FORM SIDE -->
+  <div class="form-side">
+
+    <!-- STEPS NAV -->
+    <div class="steps-nav" id="stepsNav">
+      <div class="step-tab active" data-step="1">1 · Client</div>
+      <div class="step-tab" data-step="2">2 · Services</div>
+      <div class="step-tab" data-step="3">3 · Projet</div>
+      <div class="step-tab" data-step="4">4 · Révision</div>
+    </div>
+
+    <!-- PROGRESS DOTS -->
+    <div class="step-progress" id="progressDots">
+      <div class="step-dot active"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+      <div class="step-dot"></div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="success-title">Devis envoyé !</div>
+      <p class="success-text">Votre demande de devis a bien été reçue. Je vous contacterai sous 24h pour confirmer les détails et vous transmettre votre devis complet.</p>
+      <div class="success-ref" id="refNumber">REF-XXXXXX</div>
+      <br>
+      <button class="btn-new" onclick="resetForm()">Faire un nouveau devis</button>
+    </div>
+
+    <!-- STEP 1 : Infos client -->
+    <div class="step-panel active" id="step1">
+      <div class="panel-title">Parlez-moi<br>de <span>vous.</span></div>
+      <p class="panel-sub">Quelques informations pour personnaliser votre devis et vous recontacter.</p>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Prénom *</label>
+          <input type="text" id="firstName" placeholder="Jean" oninput="updateSummary()">
+        </div>
+        <div class="field">
+          <label>Nom *</label>
+          <input type="text" id="lastName" placeholder="Placali" oninput="updateSummary()">
+        </div>
+      </div>
+      <div class="field">
+        <label>Email professionnel *</label>
+        <input type="email" id="email" placeholder="jeanplacali@entreprise.com" oninput="updateSummary()">
+      </div>
+      <div class="field">
+        <label>Téléphone</label>
+        <input type="tel" id="phone" placeholder="+225 07 00 00 00 00" oninput="updateSummary()">
+      </div>
+
+      <div class="field-section">Votre organisation</div>
+
+      <div class="field">
+        <label>Nom de l'entreprise / structure</label>
+        <input type="text" id="company" placeholder="Mon Entreprise SARL" oninput="updateSummary()">
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label>Secteur d'activité</label>
+          <select id="sector" onchange="updateSummary()">
+            <option value="">Sélectionner…</option>
+            <option>Commerce & Retail</option>
+            <option>Restauration & Food</option>
+            <option>Santé & Bien-être</option>
+            <option>Éducation & Formation</option>
+            <option>Tech & Startups</option>
+            <option>Mode & Lifestyle</option>
+            <option>Immobilier</option>
+            <option>ONG & Associations</option>
+            <option>Événementiel</option>
+            <option>Autre</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Taille de l'équipe</label>
+          <select id="teamSize" onchange="updateSummary()">
+            <option value="">Sélectionner…</option>
+            <option>Indépendant / Freelance</option>
+            <option>2–10 personnes</option>
+            <option>11–50 personnes</option>
+            <option>51–200 personnes</option>
+            <option>200+ personnes</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn-next" onclick="goStep(2)"><a href="connexion.html" class="btn-primary"></a>Continuer →</button>
+        <a href="connexion.html" class="btn-primary"></a>
+      </div>
+    </div>
+
+    <!-- STEP 2 : Services -->
+    <div class="step-panel" id="step2">
+      <div class="panel-title">Quels sont<br>vos <span>besoins ?</span></div>
+      <p class="panel-sub">Sélectionnez les services souhaités. Vous pouvez en choisir plusieurs.</p>
+
+      <div class="field-section">Prestations</div>
+      <div class="service-grid" id="serviceGrid">
+        <div class="service-pick" data-service="Communication" data-price="80000" onclick="toggleService(this)">
+          <input type="checkbox" name="service">
+          <div class="service-pick-icon">📢</div>
+          <div class="service-pick-name">Communication</div>
+          <div class="service-pick-price">À partir de 80 000 FCFA</div>
+          <div class="service-pick-check"><svg viewBox="0 0 12 12" fill="none"><polyline points="2 6 5 9 10 3"/></svg></div>
+        </div>
+        <div class="service-pick" data-service="Infographie & Design" data-price="50000" onclick="toggleService(this)">
+          <input type="checkbox" name="service">
+          <div class="service-pick-icon">🎨</div>
+          <div class="service-pick-name">Infographie & Design</div>
+          <div class="service-pick-price">À partir de 50 000 FCFA</div>
+          <div class="service-pick-check"><svg viewBox="0 0 12 12" fill="none"><polyline points="2 6 5 9 10 3"/></svg></div>
+        </div>
+        <div class="service-pick" data-service="UX / UI Design" data-price="150000" onclick="toggleService(this)">
+          <input type="checkbox" name="service">
+          <div class="service-pick-icon">🖥️</div>
+          <div class="service-pick-name">UX / UI Design</div>
+          <div class="service-pick-price">À partir de 150 000 FCFA</div>
+          <div class="service-pick-check"><svg viewBox="0 0 12 12" fill="none"><polyline points="2 6 5 9 10 3"/></svg></div>
+        </div>
+        <div class="service-pick" data-service="Photographie" data-price="75000" onclick="toggleService(this)">
+          <input type="checkbox" name="service">
+          <div class="service-pick-icon">📷</div>
+          <div class="service-pick-name">Photographie</div>
+          <div class="service-pick-price">À partir de 75 000 FCFA</div>
+          <div class="service-pick-check"><svg viewBox="0 0 12 12" fill="none"><polyline points="2 6 5 9 10 3"/></svg></div>
+        </div>
+        <div class="service-pick" data-service="Vidéographie" data-price="200000" onclick="toggleService(this)">
+          <input type="checkbox" name="service">
+          <div class="service-pick-icon">🎬</div>
+          <div class="service-pick-name">Vidéographie</div>
+          <div class="service-pick-price">À partir de 200 000 FCFA</div>
+          <div class="service-pick-check"><svg viewBox="0 0 12 12" fill="none"><polyline points="2 6 5 9 10 3"/></svg></div>
+        </div>
+        <div class="service-pick" data-service="Direction Artistique" data-price="120000" onclick="toggleService(this)">
+          <input type="checkbox" name="service">
+          <div class="service-pick-icon">🎯</div>
+          <div class="service-pick-name">Direction Artistique</div>
+          <div class="service-pick-price">À partir de 120 000 FCFA</div>
+          <div class="service-pick-check"><svg viewBox="0 0 12 12" fill="none"><polyline points="2 6 5 9 10 3"/></svg></div>
+        </div>
+      </div>
+
+      <div class="field-section">Budget approximatif</div>
+      <div class="range-wrap">
+        <div class="range-val" id="budgetDisplay">200 000 <span>FCFA</span></div>
+        <input type="range" id="budgetRange" min="50000" max="2000000" step="25000" value="200000" oninput="updateBudget(this.value)">
+        <div class="range-labels"><span>50 000 FCFA</span><span>2 000 000 FCFA</span></div>
+      </div>
+
+      <div class="field-section">Délai souhaité</div>
+      <div class="option-list">
+        <div class="option-item" data-group="delai" data-val="Urgent (< 1 semaine)" onclick="selectOption(this)">
+          <div class="option-radio"></div>
+          <div class="option-text"><div class="option-name">Urgent</div><div class="option-desc">Moins d'une semaine</div></div>
+          <div class="option-price">+30%</div>
+        </div>
+        <div class="option-item selected" data-group="delai" data-val="Standard (2–4 semaines)" onclick="selectOption(this)">
+          <div class="option-radio"></div>
+          <div class="option-text"><div class="option-name">Standard</div><div class="option-desc">2 à 4 semaines</div></div>
+          <div class="option-price">Inclus</div>
+        </div>
+        <div class="option-item" data-group="delai" data-val="Flexible (1–3 mois)" onclick="selectOption(this)">
+          <div class="option-radio"></div>
+          <div class="option-text"><div class="option-name">Flexible</div><div class="option-desc">1 à 3 mois</div></div>
+          <div class="option-price">-10%</div>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn-prev" onclick="goStep(1)">← Retour</button>
+        <button class="btn-next" onclick="goStep(3)">Continuer →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3 : Projet -->
+    <div class="step-panel" id="step3">
+      <div class="panel-title">Votre<br><span>projet</span> en détail.</div>
+      <p class="panel-sub">Plus vous êtes précis, plus le devis sera adapté à votre réalité.</p>
+
+      <div class="field">
+        <label>Nom du projet *</label>
+        <input type="text" id="projectName" placeholder="ex: Refonte identité de marque" oninput="updateSummary()">
+      </div>
+      <div class="field">
+        <label>Description du projet *</label>
+        <textarea id="projectDesc" placeholder="Décrivez votre projet, vos objectifs, votre cible, vos attentes…" rows="5" oninput="updateSummary()"></textarea>
+      </div>
+
+      <div class="field-section">Livrables attendus</div>
+      <div class="option-list">
+        <div class="option-item" data-group="livrable" data-val="Fichiers sources (Ai, Psd, Figma…)" onclick="toggleMultiOption(this)">
+          <div class="option-radio" style="border-radius:3px"></div>
+          <div class="option-text"><div class="option-name">Fichiers sources</div><div class="option-desc">Ai, Psd, Figma, Pr, etc.</div></div>
+          <div class="option-price">+15%</div>
+        </div>
+        <div class="option-item selected" data-group="livrable" data-val="Fichiers finaux exportés" onclick="toggleMultiOption(this)">
+          <div class="option-radio" style="border-radius:3px"></div>
+          <div class="option-text"><div class="option-name">Fichiers finaux exportés</div><div class="option-desc">PDF, PNG, MP4, etc.</div></div>
+          <div class="option-price">Inclus</div>
+        </div>
+        <div class="option-item" data-group="livrable" data-val="Guide de marque (Charte graphique)" onclick="toggleMultiOption(this)">
+          <div class="option-radio" style="border-radius:3px"></div>
+          <div class="option-text"><div class="option-name">Charte graphique</div><div class="option-desc">Guide d'utilisation de la marque</div></div>
+          <div class="option-price">+50 000</div>
+        </div>
+        <div class="option-item" data-group="livrable" data-val="Formation & présentation" onclick="toggleMultiOption(this)">
+          <div class="option-radio" style="border-radius:3px"></div>
+          <div class="option-text"><div class="option-name">Formation incluse</div><div class="option-desc">Présentation et prise en main</div></div>
+          <div class="option-price">+30 000</div>
+        </div>
+      </div>
+
+      <div class="field-section">Références & inspirations</div>
+      <div class="field">
+        <label>Liens de référence</label>
+        <input type="text" id="refs" placeholder="https://exemple.com, https://autre.com…" oninput="updateSummary()">
+      </div>
+
+      <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+        <div class="upload-icon">📎</div>
+        <div class="upload-text"><strong>Glissez vos fichiers ici</strong> ou cliquez pour parcourir<br>PDF, PNG, JPG, AI, PSD — max 10 Mo</div>
+        <input type="file" id="fileInput" multiple style="display:none" accept=".pdf,.png,.jpg,.ai,.psd" onchange="handleFiles(this)">
+      </div>
+      <div id="fileList" style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px;"></div>
+
+      <div class="field-section">Informations complémentaires</div>
+      <div class="form-row">
+        <div class="field">
+          <label>Avez-vous déjà une identité visuelle ?</label>
+          <select id="hasIdentity" onchange="updateSummary()">
+            <option value="">Sélectionner…</option>
+            <option>Oui, à conserver</option>
+            <option>Oui, à moderniser</option>
+            <option>Non, à créer</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Comment avez-vous connu Créa Studio ?</label>
+          <select id="source" onchange="updateSummary()">
+            <option value="">Sélectionner…</option>
+            <option>Bouche-à-oreille</option>
+            <option>Réseaux sociaux</option>
+            <option>Recherche Google</option>
+            <option>Recommendation</option>
+            <option>Autre</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Informations supplémentaires</label>
+        <textarea id="extra" placeholder="Contraintes particulières, dates clés, questions spécifiques…" rows="3" oninput="updateSummary()"></textarea>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn-prev" onclick="goStep(2)">← Retour</button>
+        <button class="btn-next" onclick="goStep(4)">Réviser le devis →</button>
+      </div>
+    </div>
+
+    <!-- STEP 4 : Révision -->
+    <div class="step-panel" id="step4">
+      <div class="panel-title">Tout est<br><span>correct ?</span></div>
+      <p class="panel-sub">Vérifiez les informations avant d'envoyer votre demande de devis.</p>
+
+      <div id="reviewBlock" style="display:flex; flex-direction:column; gap:16px;">
+        <!-- Rempli dynamiquement -->
+      </div>
+
+      <div class="field-section" style="margin-top:32px;">Conditions</div>
+      <div class="option-list">
+        <div class="option-item" id="cgvCheck" onclick="toggleCGV(this)" style="cursor:none;">
+          <div class="option-radio" style="border-radius:3px" id="cgvRadio"></div>
+          <div class="option-text">
+            <div class="option-name">J'accepte les conditions générales de vente</div>
+            <div class="option-desc">Le devis est non contractuel. Un acompte de 50% sera demandé à la validation.</div>
+          </div>
+        </div>
+        <div class="option-item" id="privacyCheck" onclick="togglePrivacy(this)" style="cursor:none;">
+          <div class="option-radio" style="border-radius:3px" id="privacyRadio"></div>
+          <div class="option-text">
+            <div class="option-name">J'accepte la politique de confidentialité</div>
+            <div class="option-desc">Vos données sont utilisées uniquement pour le traitement de votre devis.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-nav">
+        <button class="btn-prev" onclick="goStep(3)">← Retour</button>
+        <button class="btn-next" id="submitBtn" onclick="submitForm()" style="background:var(--dark-4); color:var(--muted); cursor:none;" disabled>Envoyer la demande</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SUMMARY SIDE -->
+  <div class="summary-side">
+    <div class="summary-header">
+      <div class="summary-header-title">Récapitulatif</div>
+      <div class="summary-client">
+        <div class="summary-client-name" id="sumName">—</div>
+        <div class="summary-client-co" id="sumCompany">—</div>
+      </div>
+    </div>
+
+    <div class="summary-body">
+      <div class="summary-section-label">Services sélectionnés</div>
+      <div id="sumServices"><div class="summary-empty">Aucun service sélectionné</div></div>
+
+      <div class="summary-section-label" style="margin-top:24px;">Détails du projet</div>
+      <div id="sumDetails">
+        <div class="summary-info-row"><span class="summary-info-label">Délai</span><span class="summary-info-val" id="sumDelai">Standard (2–4 sem.)</span></div>
+        <div class="summary-info-row"><span class="summary-info-label">Budget indicatif</span><span class="summary-info-val" id="sumBudget">200 000 FCFA</span></div>
+        <div class="summary-info-row"><span class="summary-info-label">Projet</span><span class="summary-info-val" id="sumProject">—</span></div>
+      </div>
+    </div>
+
+    <div class="summary-footer">
+      <div class="summary-subtotal">
+        <span>Estimation de base</span>
+        <span id="sumBase">0 FCFA</span>
+      </div>
+      <div class="summary-total-row">
+        <div class="summary-total-label">Estimation totale</div>
+        <div class="summary-total" id="sumTotal">0 <span>FCFA</span></div>
+      </div>
+      <div class="summary-note">* Estimation indicative. Le devis définitif sera établi après analyse complète de votre projet.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  window.CreaStudioApiBase = window.location.port === '8080' ? 'http://localhost:3000' : '';
+</script>
+<script src="/dist/devis.js"></script>
+<script>
+// CURSOR
+const cur = document.getElementById('cursor'), ringEl = document.getElementById('ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove', e=>{ mx=e.clientX; my=e.clientY; });
+(function loop(){ cur.style.left=mx+'px'; cur.style.top=my+'px'; rx+=(mx-rx)*.12; ry+=(my-ry)*.12; ringEl.style.left=rx+'px'; ringEl.style.top=ry+'px'; requestAnimationFrame(loop); })();
+document.querySelectorAll('a,button,.service-pick,.option-item,.upload-zone,.filter-btn').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ cur.classList.add('big'); ringEl.classList.add('big'); });
+  el.addEventListener('mouseleave',()=>{ cur.classList.remove('big'); ringEl.classList.remove('big'); });
+});
+
+// STATE
+let currentStep = 1;
+let cgvAccepted = false, privacyAccepted = false;
+let selectedServices = [];
+let selectedDelai = 'Standard (2–4 semaines)';
+let urgentMult = 1, flexibleDisc = 1;
+let selectedLivrables = ['Fichiers finaux exportés'];
+
+// STEP NAVIGATION
+function goStep(n) {
+  document.getElementById('step'+currentStep).classList.remove('active');
+  currentStep = n;
+  document.getElementById('step'+n).classList.add('active');
+  updateStepNav();
+  updateSummary();
+  if (n === 4) buildReview();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateStepNav() {
+  document.querySelectorAll('.step-tab').forEach(t => {
+    const s = parseInt(t.dataset.step);
+    t.classList.remove('active','done');
+    if (s === currentStep) t.classList.add('active');
+    else if (s < currentStep) t.classList.add('done');
+  });
+  document.querySelectorAll('.step-dot').forEach((d,i) => {
+    d.classList.remove('active','done');
+    if (i+1 === currentStep) d.classList.add('active');
+    else if (i+1 < currentStep) d.classList.add('done');
+  });
+}
+
+// SERVICES
+function toggleService(el) {
+  el.classList.toggle('selected');
+  const svc = el.dataset.service;
+  const price = parseInt(el.dataset.price);
+  if (el.classList.contains('selected')) {
+    selectedServices.push({ name: svc, price });
+  } else {
+    selectedServices = selectedServices.filter(s => s.name !== svc);
+  }
+  updateSummary();
+}
+
+// RADIO OPTIONS (single select)
+function selectOption(el) {
+  const group = el.dataset.group;
+  document.querySelectorAll('.option-item[data-group="'+group+'"]').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  if (group === 'delai') {
+    selectedDelai = el.dataset.val;
+    if (el.dataset.val.includes('Urgent')) { urgentMult = 1.3; flexibleDisc = 1; }
+    else if (el.dataset.val.includes('Flexible')) { urgentMult = 1; flexibleDisc = 0.9; }
+    else { urgentMult = 1; flexibleDisc = 1; }
+  }
+  updateSummary();
+}
+
+// MULTI OPTIONS (checkboxes)
+function toggleMultiOption(el) {
+  el.classList.toggle('selected');
+  const val = el.dataset.val;
+  if (el.classList.contains('selected')) {
+    if (!selectedLivrables.includes(val)) selectedLivrables.push(val);
+  } else {
+    selectedLivrables = selectedLivrables.filter(l => l !== val);
+  }
+  updateSummary();
+}
+
+// BUDGET
+function updateBudget(val) {
+  document.getElementById('budgetDisplay').innerHTML = parseInt(val).toLocaleString('fr-FR') + ' <span>FCFA</span>';
+  updateSummary();
+}
+
+// FILES
+function handleFiles(input) {
+  const list = document.getElementById('fileList');
+  list.innerHTML = '';
+  Array.from(input.files).forEach(f => {
+    const pill = document.createElement('div');
+    pill.style.cssText = 'font-size:12px;padding:5px 12px;background:var(--dark-3);border:1px solid var(--border-2);border-radius:4px;color:var(--muted);';
+    pill.textContent = f.name;
+    list.appendChild(pill);
+  });
+}
+
+// CGV
+function toggleCGV(el) {
+  cgvAccepted = !cgvAccepted;
+  el.classList.toggle('selected', cgvAccepted);
+  checkSubmit();
+}
+function togglePrivacy(el) {
+  privacyAccepted = !privacyAccepted;
+  el.classList.toggle('selected', privacyAccepted);
+  checkSubmit();
+}
+function checkSubmit() {
+  const btn = document.getElementById('submitBtn');
+  if (cgvAccepted && privacyAccepted) {
+    btn.style.background = 'var(--orange)';
+    btn.style.color = 'var(--dark)';
+    btn.disabled = false;
+  } else {
+    btn.style.background = 'var(--dark-4)';
+    btn.style.color = 'var(--muted)';
+    btn.disabled = true;
+  }
+}
+
+// SUMMARY UPDATE
+function updateSummary() {
+  const fn = document.getElementById('firstName')?.value || '';
+  const ln = document.getElementById('lastName')?.value || '';
+  const co = document.getElementById('company')?.value || '';
+  const proj = document.getElementById('projectName')?.value || '';
+  const budget = document.getElementById('budgetRange')?.value || 200000;
+
+  document.getElementById('sumName').textContent = (fn||ln) ? (fn+' '+ln).trim() : '—';
+  document.getElementById('sumCompany').textContent = co || '—';
+  document.getElementById('sumProject').textContent = proj || '—';
+  document.getElementById('sumDelai').textContent = selectedDelai.split('(')[0].trim();
+  document.getElementById('sumBudget').textContent = parseInt(budget).toLocaleString('fr-FR') + ' FCFA';
+
+  // Services
+  const svcEl = document.getElementById('sumServices');
+  if (selectedServices.length === 0) {
+    svcEl.innerHTML = '<div class="summary-empty">Aucun service sélectionné</div>';
+  } else {
+    svcEl.innerHTML = selectedServices.map(s =>
+      `<div class="summary-service-item"><span class="summary-service-name">${s.name}</span><span class="summary-service-price">${s.price.toLocaleString('fr-FR')}</span></div>`
+    ).join('');
+  }
+
+  // Total calc
+  let base = selectedServices.reduce((a,s)=>a+s.price, 0);
+  // livrable extras
+  if (selectedLivrables.includes('Fichiers sources (Ai, Psd, Figma…)')) base += base * 0.15;
+  if (selectedLivrables.includes('Guide de marque (Charte graphique)')) base += 50000;
+  if (selectedLivrables.includes('Formation & présentation')) base += 30000;
+  let total = Math.round(base * urgentMult * flexibleDisc);
+  document.getElementById('sumBase').textContent = base > 0 ? base.toLocaleString('fr-FR')+' FCFA' : '0 FCFA';
+  document.getElementById('sumTotal').innerHTML = total > 0 ? total.toLocaleString('fr-FR')+' <span>FCFA</span>' : '0 <span>FCFA</span>';
+}
+
+// REVIEW BUILD
+function buildReview() {
+  const fn = document.getElementById('firstName')?.value || '—';
+  const ln = document.getElementById('lastName')?.value || '—';
+  const email = document.getElementById('email')?.value || '—';
+  const phone = document.getElementById('phone')?.value || '—';
+  const co = document.getElementById('company')?.value || '—';
+  const proj = document.getElementById('projectName')?.value || '—';
+  const desc = document.getElementById('projectDesc')?.value || '—';
+  const budget = parseInt(document.getElementById('budgetRange')?.value||200000);
+
+  const sections = [
+    { title: 'Informations client', rows: [
+      ['Nom complet', fn+' '+ln],
+      ['Email', email],
+      ['Téléphone', phone || '—'],
+      ['Entreprise', co],
+    ]},
+    { title: 'Services & Délai', rows: [
+      ['Services', selectedServices.length ? selectedServices.map(s=>s.name).join(', ') : 'Aucun'],
+      ['Délai', selectedDelai],
+      ['Budget indicatif', budget.toLocaleString('fr-FR')+' FCFA'],
+    ]},
+    { title: 'Projet', rows: [
+      ['Nom du projet', proj],
+      ['Description', desc.length > 80 ? desc.slice(0,80)+'…' : desc],
+      ['Livrables', selectedLivrables.join(', ') || '—'],
+    ]},
+  ];
+
+  document.getElementById('reviewBlock').innerHTML = sections.map(s => `
+    <div style="background:var(--dark-3);border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+      <div style="padding:12px 18px;border-bottom:1px solid var(--border);font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--orange);">${s.title}</div>
+      <div style="padding:4px 18px 12px;">
+        ${s.rows.map(([l,v])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;gap:16px;"><span style="color:var(--muted);flex-shrink:0;">${l}</span><span style="text-align:right;">${v}</span></div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// SUBMIT
+async function submitForm() {
+  if (!cgvAccepted || !privacyAccepted) return;
+
+  const submitBtn = document.getElementById('submitBtn');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Envoi en cours…';
+  }
+
+  try {
+    const payload = window.CreaStudioDevis.buildDevisPayload({
+      firstName: document.getElementById('firstName')?.value || '',
+      lastName: document.getElementById('lastName')?.value || '',
+      email: document.getElementById('email')?.value || '',
+      phone: document.getElementById('phone')?.value || '',
+      company: document.getElementById('company')?.value || '',
+      sector: document.getElementById('sector')?.value || '',
+      teamSize: document.getElementById('teamSize')?.value || '',
+      selectedServices,
+      budget: document.getElementById('budgetRange')?.value || 200000,
+      selectedDelai,
+      selectedLivrables,
+      urgentMult,
+      flexibleDisc,
+      projectName: document.getElementById('projectName')?.value || '',
+      projectDesc: document.getElementById('projectDesc')?.value || '',
+      references: document.getElementById('refs')?.value || '',
+      hasIdentity: document.getElementById('hasIdentity')?.value || '',
+      extra: document.getElementById('extra')?.value || '',
+    });
+
+    const result = await window.CreaStudioDevis.submitDevisToBackend(payload);
+    document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('stepsNav').style.display = 'none';
+    document.getElementById('progressDots').style.display = 'none';
+    document.getElementById('refNumber').textContent = result.ref || 'REF-À-VALIDER';
+    document.getElementById('successScreen').classList.add('show');
+  } catch (error) {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Envoyer la demande';
+    }
+    window.alert(error.message || 'Une erreur est survenue pendant l’envoi.');
+  }
+}
+
+function resetForm() {
+  location.reload();
+}
+
+window.updateSummary = function() {
+  const fn = document.getElementById('firstName')?.value || '';
+  const ln = document.getElementById('lastName')?.value || '';
+  const co = document.getElementById('company')?.value || '';
+  const proj = document.getElementById('projectName')?.value || '';
+  const budget = document.getElementById('budgetRange')?.value || 200000;
+
+  document.getElementById('sumName').textContent = (fn||ln) ? (fn+' '+ln).trim() : '—';
+  document.getElementById('sumCompany').textContent = co || '—';
+  document.getElementById('sumProject').textContent = proj || '—';
+  document.getElementById('sumDelai').textContent = selectedDelai.split('(')[0].trim();
+  document.getElementById('sumBudget').textContent = parseInt(budget).toLocaleString('fr-FR') + ' FCFA';
+
+  const svcEl = document.getElementById('sumServices');
+  if (selectedServices.length === 0) {
+    svcEl.innerHTML = '<div class="summary-empty">Aucun service sélectionné</div>';
+  } else {
+    svcEl.innerHTML = selectedServices.map(s =>
+      `<div class="summary-service-item"><span class="summary-service-name">${s.name}</span><span class="summary-service-price">${s.price.toLocaleString('fr-FR')}</span></div>`
+    ).join('');
+  }
+
+  const { basePrice, finalPrice } = window.CreaStudioDevis.calculateEstimate(selectedServices, selectedLivrables, urgentMult, flexibleDisc);
+  document.getElementById('sumBase').textContent = basePrice > 0 ? basePrice.toLocaleString('fr-FR')+' FCFA' : '0 FCFA';
+  document.getElementById('sumTotal').innerHTML = finalPrice > 0 ? finalPrice.toLocaleString('fr-FR')+' <span>FCFA</span>' : '0 <span>FCFA</span>';
+};
+
+// Init
+window.updateSummary();
+</script>
+</body>
+</html>
