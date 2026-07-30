@@ -684,37 +684,30 @@ h2.section-title {
   align-items: stretch;
 }
 .testimonials-rail {
-  height: 320px;
+  height: 520px;
+  overflow: hidden;
   position: relative;
   border: 1px solid var(--border);
   border-radius: 18px;
   background: linear-gradient(180deg, rgba(17,17,17,0.95), rgba(8,8,8,0.95));
-  overflow: hidden;
 }
 .testimonials-track {
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   width: 100%;
-  height: 100%;
+animation: testimonialsScroll 400ms linear infinite;
 }
+.testimonials-track:hover { animation-play-state: paused; }
 .testimonial-card {
-  position: absolute;
-  inset: 0;
   background: rgba(242,237,228,0.03);
   border: 1px solid var(--border);
   border-radius: 14px;
-  padding: 28px;
+  padding: 24px;
   display: flex;
   gap: 16px;
   align-items: flex-start;
-  opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-  pointer-events: none;
-}
-.testimonial-card.active {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
+  min-height: 140px;
 }
 .testimonial-avatar {
   width: 56px;
@@ -940,7 +933,7 @@ footer {
 <nav id="navbar">
   <div class="logo"><span>Créa</span>Studio</div>
   <ul class="nav-links">
-    <li><a href="crea-studio.html">Accueil</a></li>
+    <li><a href="index.html">Accueil</a></li>
     <li><a href="#about">À propos</a></li>
     <li><a href="#services">Services</a></li>
     <li><a href="#process">Processus</a></li>
