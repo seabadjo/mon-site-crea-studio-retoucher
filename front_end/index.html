@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Créa Studio | Créateur d'Expériences Visuelles</title>
+<meta name="description" content="Chargé de Communication • Infographe • UX Designer • Photographe • Vidéaste">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --dark: #080808;
+  --dark-2: #111111;
+  --dark-3: #1a1a1a;
+  --cream: #f2ede4;
+  --orange: #e85d26;
+  --orange-light: #ff7a47;
+  --orange-glow: rgba(232, 93, 38, 0.15);
+  --muted: rgba(242, 237, 228, 0.55);
+  --muted-2: rgba(242, 237, 228, 0.35);
+  --border: rgba(242, 237, 228, 0.08);
+  --border-hover: rgba(232, 93, 38, 0.3);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--dark);
+  color: var(--cream);
+  overflow-x: hidden;
+  cursor: none;
+}
+a { text-decoration: none; color: inherit; }
+button { cursor: none; border: none; background: none; font-family: inherit; }
+ul { list-style: none; }
+
+/* CURSOR */
+.cursor {
+  position: fixed;
+  width: 12px; height: 12px;
+  background: var(--orange);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s, width 0.3s, height 0.3s, background 0.3s;
+}
+.cursor-ring {
+  position: fixed;
+  width: 40px; height: 40px;
+  border: 1px solid rgba(232, 93, 38, 0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: transform 0.12s ease-out, width 0.3s, height 0.3s, border-color 0.3s;
+}
+.cursor.hover { width: 6px; height: 6px; }
+.cursor-ring.hover { width: 60px; height: 60px; border-color: var(--orange); }
+
+/* NOISE OVERLAY */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9997;
+  opacity: 0.4;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 24px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.4s, padding 0.4s;
+}
+nav.scrolled {
+  background: rgba(8,8,8,0.95);
+  backdrop-filter: blur(20px);
+  padding: 16px 48px;
+  border-bottom: 1px solid var(--border);
+}
+.logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+.logo span { color: var(--orange); }
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: color 0.3s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; left: 0;
+  width: 0; height: 1px;
+  background: var(--orange);
+  transition: width 0.3s;
+}
+.nav-links a:hover { color: var(--cream); }
+.nav-links a:hover::after { width: 100%; }
+.nav-cta {
+  background: var(--orange);
+  color: var(--dark) !important;
+  padding: 10px 24px;
+  border-radius: 4px;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.03em !important;
+  text-transform: uppercase !important;
+  transition: background 0.3s !important;
+}
+.nav-cta::after { display: none !important; }
+.nav-cta:hover { background: var(--orange-light) !important; color: var(--dark) !important; }
+
+/* HERO */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 48px 80px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 70% 40%, rgba(232, 93, 38, 0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 20% 80%, rgba(232, 93, 38, 0.06) 0%, transparent 60%);
+}
+.hero-line {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: var(--border);
+}
+.hero-line:nth-child(1) { left: 25%; }
+.hero-line:nth-child(2) { left: 50%; }
+.hero-line:nth-child(3) { left: 75%; }
+.hero-grid-dot {
+  position: absolute;
+  width: 4px; height: 4px;
+  background: var(--orange);
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+.hero-eyebrow {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.2s forwards;
+}
+.hero-eyebrow::before {
+  content: '';
+  width: 40px; height: 1px;
+  background: var(--orange);
+}
+
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(52px, 8vw, 120px);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin-bottom: 40px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.35s forwards;
+}
+.hero-title .outline {
+  -webkit-text-stroke: 1px rgba(242, 237, 228, 0.3);
+  color: transparent;
+}
+.hero-title .accent { color: var(--orange); }
+
+.hero-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+  opacity: 0;
+  animation: fadeUp 0.8s 0.5s forwards;
+}
+.hero-desc {
+  max-width: 400px;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.7;
+}
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.btn-primary {
+  background: var(--orange);
+  color: var(--dark);
+  padding: 14px 32px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  transition: background 0.3s, transform 0.2s;
+  display: inline-block;
+}
+.btn-primary:hover { background: var(--orange-light); transform: translateY(-2px); }
+.btn-ghost {
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 14px 32px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  transition: all 0.3s;
+  display: inline-block;
+}
+.btn-ghost:hover { border-color: var(--border-hover); color: var(--cream); }
+
+.hero-scroll {
+  position: absolute;
+  bottom: 40px;
+  right: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted-2);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  writing-mode: vertical-rl;
+  opacity: 0;
+  animation: fadeIn 1s 1s forwards;
+}
+.hero-scroll::after {
+  content: '';
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, var(--orange), transparent);
+}
+
+/* MARQUEE */
+.marquee-section {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 0;
+  overflow: hidden;
+}
+.marquee-track {
+  display: flex;
+  gap: 0;
+  animation: marquee 25s linear infinite;
+  white-space: nowrap;
+}
+.marquee-item {
+  flex-shrink: 0;
+  padding: 0 48px;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.marquee-dot {
+  width: 4px; height: 4px;
+  background: var(--orange);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* SECTION BASE */
+section { padding: 120px 48px; }
+.section-tag {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-tag::before {
+  content: '';
+  width: 24px; height: 1px;
+  background: var(--orange);
+}
+h2.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(36px, 4vw, 64px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+/* ABOUT */
+.about { background: var(--dark-2); }
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.about-left {}
+.about-left h2 { margin-bottom: 32px; }
+.about-left h2 .outline {
+  -webkit-text-stroke: 1px rgba(242, 237, 228, 0.25);
+  color: transparent;
+}
+.about-text {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+.about-skills { margin-top: 48px; }
+.skill-row { margin-bottom: 20px; }
+.skill-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: var(--muted);
+}
+.skill-meta span:last-child { color: var(--orange); font-weight: 500; }
+.skill-track {
+  height: 2px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: visible;
+  position: relative;
+}
+.skill-fill {
+  height: 100%;
+  background: var(--orange);
+  border-radius: 2px;
+  position: relative;
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.skill-fill.animate { transform: scaleX(1); }
+.skill-fill::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 8px; height: 8px;
+  background: var(--orange);
+  border-radius: 50%;
+  box-shadow: 0 0 12px var(--orange);
+}
+.about-right {}
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  margin-top: 60px;
+}
+.stat-box {
+  background: var(--dark-3);
+  padding: 36px 28px;
+  position: relative;
+  overflow: hidden;
+}
+.stat-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 2px; height: 0;
+  background: var(--orange);
+  transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.stat-box:hover::before { height: 100%; }
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 52px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  color: var(--cream);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.stat-num span { color: var(--orange); }
+.stat-label {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+.portrait-block {
+  position: relative;
+  aspect-ratio: 3/4;
+  background: var(--dark-3);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.portrait-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne', sans-serif;
+  font-size: 80px;
+  font-weight: 800;
+  color: var(--border);
+}
+.portrait-overlay {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, var(--dark-2) 0%, transparent 100%);
+  padding: 32px 24px 24px;
+}
+.portrait-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+}
+.portrait-role {
+  font-size: 13px;
+  color: var(--orange);
+  margin-top: 4px;
+  letter-spacing: 0.05em;
+}
+
+/* SERVICES */
+.services { background: var(--dark); }
+.services-inner { max-width: 1280px; margin: 0 auto; }
+.services-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 80px;
+}
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+.service-card {
+  background: var(--dark-2);
+  padding: 48px 36px;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.4s;
+}
+.service-card:hover { background: var(--dark-3); }
+.service-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid transparent;
+  transition: border-color 0.4s;
+  pointer-events: none;
+}
+.service-card:hover::after { border-color: var(--border-hover); }
+.service-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--orange);
+  letter-spacing: 0.2em;
+  margin-bottom: 40px;
+}
+.service-icon {
+  width: 48px; height: 48px;
+  margin-bottom: 28px;
+  color: var(--orange);
+  opacity: 0.8;
+}
+.service-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+.service-desc {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 36px;
+}
+.service-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tag {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  border-radius: 2px;
+  transition: border-color 0.3s, color 0.3s;
+}
+.service-card:hover .tag { border-color: rgba(232,93,38,0.2); color: var(--muted); }
+
+/* PORTFOLIO */
+.portfolio { background: var(--dark-2); }
+.portfolio-inner { max-width: 1280px; margin: 0 auto; }
+.portfolio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 60px;
+}
+.portfolio-filters {
+  display: flex;
+  gap: 4px;
+}
+.filter-btn {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  padding: 8px 16px;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  transition: all 0.3s;
+  font-family: 'DM Sans', sans-serif;
+  cursor: none;
+}
+.filter-btn:hover, .filter-btn.active {
+  color: var(--cream);
+  border-color: var(--border);
+  background: var(--dark-3);
+}
+.filter-btn.active { color: var(--orange); border-color: rgba(232,93,38,0.3); }
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 2px;
+}
+.portfolio-item {
+  background: var(--dark-3);
+  overflow: hidden;
+  position: relative;
+  aspect-ratio: 1;
+}
+.portfolio-item.large { grid-column: span 7; aspect-ratio: 7/5; }
+.portfolio-item.medium { grid-column: span 5; aspect-ratio: 5/5; }
+.portfolio-item.wide { grid-column: span 5; aspect-ratio: 5/4; }
+.portfolio-item.tall { grid-column: span 7; aspect-ratio: 7/4; }
+.portfolio-bg {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 60px;
+  opacity: 0.08;
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+}
+.portfolio-item:hover .portfolio-bg { transform: scale(1.05); }
+.portfolio-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(8,8,8,0.9) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s;
+  display: flex;
+  align-items: flex-end;
+  padding: 28px 24px;
+}
+.portfolio-item:hover .portfolio-overlay { opacity: 1; }
+.portfolio-info {}
+.portfolio-cat {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin-bottom: 6px;
+}
+.portfolio-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.portfolio-color-1 { background: linear-gradient(135deg, #1a0f0a 0%, #2d1810 100%); }
+.portfolio-color-2 { background: linear-gradient(135deg, #0a0f1a 0%, #0f1a2d 100%); }
+.portfolio-color-3 { background: linear-gradient(135deg, #0a1a0f 0%, #0f2d1a 100%); }
+.portfolio-color-4 { background: linear-gradient(135deg, #1a1a0a 0%, #2d2d10 100%); }
+.portfolio-color-5 { background: linear-gradient(135deg, #1a0a14 0%, #2d1020 100%); }
+
+/* PROCESS */
+.process { background: var(--dark); }
+.process-inner { max-width: 1280px; margin: 0 auto; }
+.process-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  margin-top: 80px;
+}
+.step {
+  padding: 40px 32px;
+  background: var(--dark-2);
+  position: relative;
+  overflow: hidden;
+}
+.step::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--border);
+  transition: background 0.4s;
+}
+.step:hover::before { background: var(--orange); }
+.step-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 64px;
+  font-weight: 800;
+  color: var(--border);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  margin-bottom: 24px;
+  transition: color 0.4s;
+}
+.step:hover .step-num { color: rgba(232,93,38,0.2); }
+.step-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.step-desc { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* TESTIMONIALS */
+.testimonials { background: var(--dark); }
+.testimonials-inner { max-width: 1280px; margin: 0 auto; }
+.testimonials-shell {
+  margin-top: 48px;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 24px;
+  align-items: stretch;
+}
+.testimonials-rail {
+  height: 320px;
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(17,17,17,0.95), rgba(8,8,8,0.95));
+  overflow: hidden;
+}
+.testimonials-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.testimonial-card {
+  position: absolute;
+  inset: 0;
+  background: rgba(242,237,228,0.03);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  pointer-events: none;
+}
+.testimonial-card.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.testimonial-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--orange), var(--orange-light));
+  color: var(--dark);
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 18px;
+}
+.testimonial-content { flex: 1; }
+.testimonial-quote { font-size: 15px; line-height: 1.7; color: var(--cream); margin-bottom: 12px; }
+.testimonial-author { font-family: 'Syne', sans-serif; font-weight: 700; }
+.testimonial-role { font-size: 13px; color: var(--muted); margin-top: 4px; }
+.testimonials-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
+}
+.testimonials-side .pill {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 10px 16px;
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  width: fit-content;
+}
+@keyframes testimonialsScroll {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+
+/* CONTACT */
+.contact { background: var(--dark-2); }
+.contact-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  align-items: start;
+}
+.contact-left h2 { margin-bottom: 24px; }
+.contact-text { color: var(--muted); font-size: 16px; line-height: 1.7; margin-bottom: 48px; }
+.contact-info { display: flex; flex-direction: column; gap: 20px; }
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  background: var(--dark-3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  transition: border-color 0.3s;
+}
+.contact-item:hover { border-color: var(--border-hover); }
+.contact-item-icon {
+  width: 40px; height: 40px;
+  background: var(--orange-glow);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--orange);
+  flex-shrink: 0;
+}
+.contact-item-text {}
+.contact-item-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-2); }
+.contact-item-value { font-size: 15px; font-weight: 500; margin-top: 2px; }
+.contact-right {}
+.contact-form { display: flex; flex-direction: column; gap: 16px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.field label {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  margin-bottom: 8px;
+}
+.field input, .field textarea, .field select {
+  width: 100%;
+  background: var(--dark-3);
+  border: 1px solid var(--border);
+  color: var(--cream);
+  padding: 14px 18px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  border-radius: 4px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+  outline: none;
+  appearance: none;
+}
+.field input:focus, .field textarea:focus {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 3px rgba(232, 93, 38, 0.1);
+}
+.field textarea { resize: vertical; min-height: 140px; }
+.form-submit {
+  background: var(--orange);
+  color: var(--dark);
+  padding: 16px 40px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: background 0.3s, transform 0.2s;
+  width: 100%;
+  font-family: 'DM Sans', sans-serif;
+  cursor: none;
+}
+.form-submit:hover { background: var(--orange-light); transform: translateY(-2px); }
+
+/* FOOTER */
+footer {
+  background: var(--dark);
+  border-top: 1px solid var(--border);
+  padding: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-logo {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+.footer-logo span { color: var(--orange); }
+.footer-copy { font-size: 13px; color: var(--muted-2); }
+.footer-admin {
+  margin-left: 10px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  transition: color 0.3s;
+}
+.footer-admin:hover { color: var(--orange); }
+.footer-social { display: flex; gap: 20px; }
+.footer-social a {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+  transition: color 0.3s;
+}
+.footer-social a:hover { color: var(--orange); }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* SVG ICONS */
+.icon { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+@media (max-width: 1024px) {
+  nav { padding: 20px 24px; }
+  nav.scrolled { padding: 14px 24px; }
+  .nav-links { gap: 20px; }
+  section { padding: 80px 24px; }
+  .hero { padding: 0 24px 60px; }
+  .about-grid { grid-template-columns: 1fr; gap: 40px; }
+  .services-grid { grid-template-columns: 1fr 1fr; }
+  .process-steps { grid-template-columns: 1fr 1fr; }
+  .testimonials-shell { grid-template-columns: 1fr; }
+  .testimonials-rail { height: 420px; }
+  .contact-inner { grid-template-columns: 1fr; gap: 60px; }
+  footer { flex-direction: column; gap: 24px; text-align: center; padding: 32px 24px; }
+  .hero-scroll { display: none; }
+  .hero-title { font-size: 52px; }
+  .portfolio-grid { grid-template-columns: 1fr 1fr; }
+  .portfolio-item.large, .portfolio-item.medium, .portfolio-item.wide, .portfolio-item.tall { grid-column: span 1; aspect-ratio: 1; }
+  .services-header, .portfolio-header { flex-direction: column; align-items: flex-start; gap: 24px; }
+  .hero-bottom { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  section { padding: 60px 20px; }
+  .hero { padding: 0 20px 50px; }
+  .hero-title { font-size: 40px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .services-grid { grid-template-columns: 1fr; }
+  .process-steps { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  footer { padding: 28px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="logo"><span>Créa</span>Studio</div>
+  <ul class="nav-links">
+    <li><a href="crea-studio.html">Accueil</a></li>
+    <li><a href="#about">À propos</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#process">Processus</a></li>
+    <li><a href="#contact" class="nav-cta">Me contacter</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-line"></div>
+  <div class="hero-line"></div>
+  <div class="hero-line"></div>
+
+  <div class="hero-eyebrow">Créateur d'expériences visuelles</div>
+
+  <h1 class="hero-title">
+    Donner vie<br>
+    à vos <span class="accent">idées</span><br>
+    <span class="outline">visuelles.</span>
+  </h1>
+
+  <div class="hero-bottom">
+    <p class="hero-desc">
+      Chargé de communication, infographe, UX designer, photographe, vidéaste et Devs FullStack — je transforme vos idées en expériences visuelles mémorables.
+    </p>
+    <div class="hero-actions">
+      <a href="devis.html" class="btn-primary">Demander un devis</a>
+      <a href="collaborer.html" class="btn-ghost">Collaborer</a>
+      <a href="chat.html" class="btn-ghost">Discutons de votre projet</a>
+    </div>
+  </div>
+
+  <div class="hero-scroll">Défiler</div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <div class="marquee-item"><span class="marquee-dot"></span>Communication visuelle</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Identité de marque</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>UX / UI Design</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Photographie</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Vidéographie</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Infographie</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Motion Design</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Direction artistique</div>
+    <!-- duplicate for seamless loop -->
+    <div class="marquee-item"><span class="marquee-dot"></span>Communication visuelle</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Identité de marque</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>UX / UI Design</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Photographie</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Vidéographie</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Infographie</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Motion Design</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Direction artistique</div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-grid">
+    <div class="about-left">
+      <div class="section-tag reveal">À propos</div>
+      <h2 class="section-title reveal reveal-delay-1">
+        Créatif,<br><span class="outline">stratégique</span><br>et passionné.
+      </h2>
+      <p class="about-text reveal reveal-delay-2">
+        Avec plus de 5 ans d'expérience dans le domaine de la communication visuelle, je conçois des expériences qui captivent et des identités qui marquent les esprits.
+      </p>
+      <p class="about-text reveal reveal-delay-2">
+        Mon approche allie rigueur stratégique et sensibilité artistique pour produire des contenus qui servent réellement vos objectifs de communication.
+      </p>
+
+      <div class="about-skills">
+        <div class="skill-row reveal reveal-delay-1">
+          <div class="skill-meta"><span>Direction artistique</span><span>92%</span></div>
+          <div class="skill-track"><div class="skill-fill" style="width:92%"></div></div>
+        </div>
+        <div class="skill-row reveal reveal-delay-2">
+          <div class="skill-meta"><span>UX / UI Design</span><span>87%</span></div>
+          <div class="skill-track"><div class="skill-fill" style="width:87%"></div></div>
+        </div>
+        <div class="skill-row reveal reveal-delay-3">
+          <div class="skill-meta"><span>Photographie</span><span>85%</span></div>
+          <div class="skill-track"><div class="skill-fill" style="width:85%"></div></div>
+        </div>
+        <div class="skill-row reveal reveal-delay-4">
+          <div class="skill-meta"><span>Vidéo & Motion</span><span>78%</span></div>
+          <div class="skill-track"><div class="skill-fill" style="width:78%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-right reveal">
+      <div class="portrait-block">
+        <div class="portrait-placeholder">CS</div>
+        <div class="portrait-overlay">
+          <div>
+            <div class="portrait-name">Créa Studio</div>
+            <div class="portrait-role">Directeur Créatif & Designer</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-num">5<span>+</span></div>
+          <div class="stat-label">Années d'expérience</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">120<span>+</span></div>
+          <div class="stat-label">Projets livrés</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">48<span>+</span></div>
+          <div class="stat-label">Clients satisfaits</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">12<span>+</span></div>
+          <div class="stat-label">Distinctions reçues</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="services-inner">
+    <div class="services-header">
+      <div>
+        <div class="section-tag reveal">Expertises</div>
+        <h2 class="section-title reveal reveal-delay-1">Ce que je<br>fais pour vous.</h2>
+      </div>
+      <a href="#contact" class="btn-ghost reveal reveal-delay-2">Discutons de votre projet →</a>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-num">01</div>
+        <svg class="service-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="6" y="6" width="36" height="36" rx="4"/>
+          <path d="M14 24l7 7 13-13"/>
+        </svg>
+        <div class="service-title">Chargé de Communication</div>
+        <div class="service-desc">Élaboration de stratégies de communication cohérentes, rédaction de contenus impactants et gestion de votre image de marque.</div>
+        <div class="service-tags">
+          <span class="tag">Stratégie</span>
+          <span class="tag">Branding</span>
+          <span class="tag">Rédaction</span>
+          <span class="tag">Social media</span>
+        </div>
+      </div>
+
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-num">02</div>
+        <svg class="service-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="24" cy="24" r="10"/>
+          <path d="M24 6v4M24 38v4M6 24h4M38 24h4"/>
+          <path d="M11 11l3 3M34 34l3 3M11 37l3-3M34 14l3-3"/>
+        </svg>
+        <div class="service-title">Infographie & Design</div>
+        <div class="service-desc">Création de visuels percutants, infographies claires et supports print ou digital qui renforcent votre message.</div>
+        <div class="service-tags">
+          <span class="tag">Print</span>
+          <span class="tag">Digital</span>
+          <span class="tag">Illustration</span>
+          <span class="tag">Typographie</span>
+        </div>
+      </div>
+
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-num">03</div>
+        <svg class="service-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="8" y="12" width="32" height="24" rx="3"/>
+          <path d="M16 36v4M32 36v4M12 40h24"/>
+          <path d="M20 22l5 4 5-4"/>
+        </svg>
+        <div class="service-title">UX / UI Design</div>
+        <div class="service-desc">Conception d'interfaces intuitives et d'expériences utilisateur fluides, de la recherche au prototype finalisé.</div>
+        <div class="service-tags">
+          <span class="tag">Wireframe</span>
+          <span class="tag">Prototype</span>
+          <span class="tag">Figma</span>
+          <span class="tag">Tests</span>
+        </div>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="service-num">04</div>
+        <svg class="service-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M42 32a6 6 0 01-6 6H12a6 6 0 01-6-6V16a6 6 0 016-6h24a6 6 0 016 6v16z"/>
+          <circle cx="18" cy="22" r="4"/>
+          <path d="M36 32l-8-8-6 6-4-4-6 6"/>
+        </svg>
+        <div class="service-title">Photographie</div>
+        <div class="service-desc">Reportages professionnels, photos produit ou portraits d'entreprise : des images qui racontent votre histoire avec authenticité.</div>
+        <div class="service-tags">
+          <span class="tag">Corporate</span>
+          <span class="tag">Produit</span>
+          <span class="tag">Reportage</span>
+          <span class="tag">Retouche</span>
+        </div>
+      </div>
+
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-num">05</div>
+        <svg class="service-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 12a2 2 0 012-2h28a2 2 0 012 2v20a2 2 0 01-2 2H8a2 2 0 01-2-2V12z"/>
+          <path d="M32 22l8-5v14l-8-5v-4z"/>
+          <circle cx="20" cy="22" r="6"/>
+        </svg>
+        <div class="service-title">Vidéographie</div>
+        <div class="service-desc">Production vidéo complète : tournage, montage, étalonnage et motion design pour des contenus qui captivent.</div>
+        <div class="service-tags">
+          <span class="tag">Tournage</span>
+          <span class="tag">Montage</span>
+          <span class="tag">Motion</span>
+          <span class="tag">Étalonnage</span>
+        </div>
+      </div>
+
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-num">06</div>
+        <svg class="service-icon" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 36l6-6 5 5 7-10 6 11"/>
+          <rect x="6" y="6" width="36" height="36" rx="4"/>
+          <path d="M6 20h36"/>
+        </svg>
+        <div class="service-title">Direction Artistique</div>
+        <div class="service-desc">Vision cohérente et créative pour vos campagnes et projets, du concept initial jusqu'à la réalisation finale.</div>
+        <div class="service-tags">
+          <span class="tag">Concept</span>
+          <span class="tag">Moodboard</span>
+          <span class="tag">Campagne</span>
+          <span class="tag">Identité</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PORTFOLIO -->
+<section class="portfolio" id="portfolio">
+  <div class="portfolio-inner">
+    <div class="portfolio-header">
+      <div>
+        <div class="section-tag reveal">Réalisations</div>
+        <h2 class="section-title reveal reveal-delay-1">Projets<br>récents.</h2>
+      </div>
+      <div class="portfolio-filters reveal reveal-delay-2">
+        <button class="filter-btn active" data-filter="all">Tous</button>
+        <button class="filter-btn" data-filter="design">Design</button>
+        <button class="filter-btn" data-filter="photo">Photo</button>
+        <button class="filter-btn" data-filter="video">Vidéo</button>
+      </div>
+    </div>
+
+    <div class="portfolio-grid">
+      <div class="portfolio-item large portfolio-color-1 reveal">
+        <div class="portfolio-bg">01</div>
+        <div class="portfolio-overlay">
+          <div class="portfolio-info">
+            <div class="portfolio-cat">Identité visuelle</div>
+            <div class="portfolio-name">Rebranding Luxe</div>
+          </div>
+        </div>
+      </div>
+      <div class="portfolio-item medium portfolio-color-2 reveal reveal-delay-1">
+        <div class="portfolio-bg">02</div>
+        <div class="portfolio-overlay">
+          <div class="portfolio-info">
+            <div class="portfolio-cat">UX Design</div>
+            <div class="portfolio-name">Application mobile</div>
+          </div>
+        </div>
+      </div>
+      <div class="portfolio-item wide portfolio-color-3 reveal">
+        <div class="portfolio-bg">03</div>
+        <div class="portfolio-overlay">
+          <div class="portfolio-info">
+            <div class="portfolio-cat">Photographie</div>
+            <div class="portfolio-name">Campagne corporate</div>
+          </div>
+        </div>
+      </div>
+      <div class="portfolio-item tall portfolio-color-4 reveal reveal-delay-2">
+        <div class="portfolio-bg">04</div>
+        <div class="portfolio-overlay">
+          <div class="portfolio-info">
+            <div class="portfolio-cat">Motion Design</div>
+            <div class="portfolio-name">Spot publicitaire</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="process-inner">
+    <div class="section-tag reveal">Comment je travaille</div>
+    <h2 class="section-title reveal reveal-delay-1">Un processus<br>clair et efficace.</h2>
+
+    <div class="process-steps">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <div class="step-title">Découverte</div>
+        <div class="step-desc">J'écoute vos besoins, analyse votre univers et identifie vos objectifs pour construire une base solide.</div>
+      </div>
+      <div class="step reveal reveal-delay-1">
+        <div class="step-num">02</div>
+        <div class="step-title">Stratégie</div>
+        <div class="step-desc">Définition d'une direction créative précise, d'un planning et d'une proposition de valeur unique.</div>
+      </div>
+      <div class="step reveal reveal-delay-2">
+        <div class="step-num">03</div>
+        <div class="step-title">Création</div>
+        <div class="step-desc">Production des livrables avec rigueur et créativité, en maintenant un échange régulier avec vous.</div>
+      </div>
+      <div class="step reveal reveal-delay-3">
+        <div class="step-num">04</div>
+        <div class="step-title">Livraison</div>
+        <div class="step-desc">Remise des fichiers sources, accompagnement au déploiement et suivi post-livraison.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+  <div class="testimonials-inner">
+    <div class="section-tag reveal">Témoignages</div>
+    <h2 class="section-title reveal reveal-delay-1">Ce que disent<br>les clients.</h2>
+    <div class="testimonials-shell">
+      <div class="testimonials-rail reveal">
+        <div class="testimonials-track" id="testimonialsTrack"></div>
+      </div>
+      <div class="testimonials-side reveal reveal-delay-1">
+        <div class="pill">100% de satisfaction</div>
+        <div class="pill">Design & stratégie</div>
+        <div class="pill">Réponses rapides</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="contact-inner">
+    <div class="contact-left">
+      <div class="section-tag reveal">Contact</div>
+      <h2 class="section-title reveal reveal-delay-1">Parlons de<br>votre projet.</h2>
+      
+      <p class="contact-text reveal reveal-delay-2">
+        Vous avez un projet en tête ? Une collaboration à envisager ? N'hésitez pas à me contacter, je réponds sous 24h.
+      </p>
+
+      <div class="contact-info">
+        <div class="contact-item reveal reveal-delay-1">
+          <div class="contact-item-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+              <polyline points="22,6 12,13 2,6"/>
+            </svg>
+          </div>
+          <div class="contact-item-text">
+            <div class="contact-item-label">Email</div>
+            <div class="contact-item-value">hello@creastudio.com</div>
+          </div>
+        </div>
+        <div class="contact-item reveal reveal-delay-2">
+          <div class="contact-item-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012.18 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.1 6.1l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+            </svg>
+          </div>
+          <div class="contact-item-text">
+            <div class="contact-item-label">Téléphone</div>
+            <div class="contact-item-value">+225 05 64 41 18 67 <br> +225 01 52 75 40 90</div>
+          </div>
+        </div>
+        <div class="contact-item reveal reveal-delay-3">
+          <div class="contact-item-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+          </div>
+          <div class="contact-item-text">
+            <div class="contact-item-label">Localisation</div>
+            <div class="contact-item-value">Cocody,Abidjan, Côte d'Ivoire</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-block">
+      <a href="devis.html" class="btn-primary">Demander un devis</a>
+    <div class="cta-title"></div>
+  </div>
+   
+    <div class="section-tag reveal">Ou décrivez  votre projet...</div>
+    
+    <div class="contact-right reveal reveal-delay-2">
+      <form class="contact-form" onsubmit="return false;">
+        <div class="form-row">
+          <div class="field">
+            <label>Prénom</label>
+            <input type="text" placeholder="Jean">
+          </div>
+          <div class="field">
+            <label>Nom</label>
+            <input type="text" placeholder="Placali">
+          </div>
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" placeholder="jeanplacali@exemple.com">
+        </div>
+        <div class="field">
+          <label>Type de projet</label>
+          <select>
+            <option value="">Sélectionner…</option>
+            <option>Communication & Branding</option>
+            <option>Design graphique</option>
+            <option>UX / UI Design</option>
+            <option>Photographie</option>
+            <option>Vidéographie</option>
+            <option>Direction artistique</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Message</label>
+          <textarea placeholder="Décrivez votre projet en quelques mots…"></textarea>
+        </div>
+        <button class="form-submit" type="submit">Envoyer le message</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo"><span>Créa</span>Studio</div>
+  <div class="footer-copy">
+    © 2026 Créa Studio. Tous droits réservés.
+    <a href="admin/" class="footer-admin">Admin</a>
+  </div>
+  <div class="footer-social">
+    <a href="#">Instagram</a>
+    <a href="#">Behance</a>
+    <a href="#">LinkedIn</a>
+  </div>
+</footer>
+
+<script>
+// Cursor
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+function animCursor() {
+  cursor.style.left = mx + 'px';
+  cursor.style.top = my + 'px';
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px';
+  ring.style.top = ry + 'px';
+  requestAnimationFrame(animCursor);
+}
+animCursor();
+document.querySelectorAll('a, button, .service-card, .portfolio-item, .stat-box, .contact-item').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.classList.add('hover'); ring.classList.add('hover'); });
+  el.addEventListener('mouseleave', () => { cursor.classList.remove('hover'); ring.classList.remove('hover'); });
+});
+
+// Navbar scroll
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 80) navbar.classList.add('scrolled');
+  else navbar.classList.remove('scrolled');
+});
+
+// Reveal on scroll
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      // Animate skill bars
+      entry.target.querySelectorAll('.skill-fill').forEach(bar => bar.classList.add('animate'));
+      if (entry.target.classList.contains('skill-fill')) entry.target.classList.add('animate');
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Portfolio filter
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+async function loadTestimonials() {
+  try {
+    const response = await fetch('http://localhost:3001/api/testimonials');
+    const testimonials = await response.json();
+    const track = document.getElementById('testimonialsTrack');
+    if (!track) return;
+
+    if (!testimonials.length) {
+      track.innerHTML = '<div class="testimonial-card active"><div class="testimonial-content"><div class="testimonial-quote">“Un travail sobre, clair et impactant.”</div><div class="testimonial-author">Client satisfait</div><div class="testimonial-role">Créa Studio</div></div></div>';
+      return;
+    }
+
+    track.innerHTML = testimonials.map((t, index) => {
+      const initials = (t.name || 'CL').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+      return `
+        <article class="testimonial-card ${index === 0 ? 'active' : ''}">
+          <div class="testimonial-avatar">${initials}</div>
+          <div class="testimonial-content">
+            <div class="testimonial-quote">“${t.quote}”</div>
+            <div class="testimonial-author">${t.name}</div>
+            <div class="testimonial-role">${t.role}</div>
+          </div>
+        </article>
+      `;
+    }).join('');
+
+    let currentIndex = 0;
+    setInterval(() => {
+      const cards = track.querySelectorAll('.testimonial-card');
+      cards.forEach(card => card.classList.remove('active'));
+      currentIndex = (currentIndex + 1) % cards.length;
+      cards[currentIndex].classList.add('active');
+    }, 5000);
+  } catch (error) {
+    console.error('Impossible de charger les témoignages', error);
+  }
+}
+loadTestimonials();
+</script>
+</body>
+</html>
