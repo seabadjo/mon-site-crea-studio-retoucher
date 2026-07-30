@@ -254,6 +254,16 @@ nav{display:flex;align-items:center;justify-content:space-between;padding:14px 2
     <div class="sr-title">Actions</div>
 
     <div class="sr-section">
+      <div class="sr-label">Témoignages</div>
+      <div class="off-form">
+        <textarea class="off-note" id="testimonialForm" placeholder="Écrivez un témoignage…"></textarea>
+        <input class="off-input" id="testimonialName" placeholder="Nom du client">
+        <input class="off-input" id="testimonialRole" placeholder="Rôle / entreprise">
+        <button class="btn-off" onclick="saveTestimonial()">💬 Enregistrer</button>
+      </div>
+    </div>
+
+    <div class="sr-section">
       <div class="sr-label">Envoyer une offre de prix</div>
       <div class="off-form">
         <div class="off-input-wrap">
@@ -522,6 +532,29 @@ async function loadNotifs() {
 function handleKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();} }
 function autoResize(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,100)+'px'; }
 function scrollBottom() { const m=document.getElementById('messages'); m.scrollTop=m.scrollHeight; }
+async function saveTestimonial() {
+  const quote = document.getElementById('testimonialForm').value.trim();
+  const name = document.getElementById('testimonialName').value.trim();
+  const role = document.getElementById('testimonialRole').value.trim();
+  if (!quote || !name) return;
+
+  try {
+    const current = await fetch('http://localhost:3001/api/testimonials').then(r => r.json());
+    const updated = [...current, { id: Date.now(), name, role: role || 'Client', quote }];
+    await fetch('http://localhost:3001/api/testimonials', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updated)
+    });
+    document.getElementById('testimonialForm').value = '';
+    document.getElementById('testimonialName').value = '';
+    document.getElementById('testimonialRole').value = '';
+    alert('Témoignage enregistré');
+  } catch (error) {
+    alert('Erreur lors de l\'enregistrement');
+  }
+}
+
 function escHtml(s) { return s?.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')||''; }
 </script>
 </body>
