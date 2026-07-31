@@ -40,24 +40,40 @@ function getContentType(filePath) {
 }
 
 function serveStaticFile(req, res, pathname) {
-  let safePath = pathname === '/' ? '/index.html' : pathname;
-  safePath = safePath.replace(/^\/+/, '');
-  if (!safePath) safePath = 'index.html';
+  const candidates = [];
+  const normalizedPath = pathname === '/' ? '/index.html' : pathname;
+  const trimmedPath = normalizedPath.replace(/^\/+/, '');
 
-  const resolvedPath = path.resolve(root, safePath);
-  if (!resolvedPath.startsWith(root)) {
-    res.writeHead(403, { 'Content-Type': 'application/json; charset=utf-8' });
-    res.end(JSON.stringify({ error: 'Forbidden' }));
-    return true;
+  if (!trimmedPath) {
+    candidates.push('index.html');
+  } else {
+    const hasExtension = path.extname(trimmedPath) !== '';
+    if (trimmedPath.endsWith('/')) {
+      candidates.push(`${trimmedPath}index.html`);
+    } else {
+      candidates.push(trimmedPath);
+      if (!hasExtension) {
+        candidates.push(`${trimmedPath}.html`);
+        candidates.push(path.join(trimmedPath, 'index.html'));
+      }
+    }
   }
 
-  if (!fs.existsSync(resolvedPath) || !fs.statSync(resolvedPath).isFile()) {
-    return false;
+  for (const candidate of candidates) {
+    const safeCandidate = candidate.replace(/^\/+/, '');
+    const resolvedPath = path.resolve(root, safeCandidate);
+    if (!resolvedPath.startsWith(root)) {
+      continue;
+    }
+
+    if (fs.existsSync(resolvedPath) && fs.statSync(resolvedPath).isFile()) {
+      res.writeHead(200, { 'Content-Type': getContentType(resolvedPath) });
+      fs.createReadStream(resolvedPath).pipe(res);
+      return true;
+    }
   }
 
-  res.writeHead(200, { 'Content-Type': getContentType(resolvedPath) });
-  fs.createReadStream(resolvedPath).pipe(res);
-  return true;
+  return false;
 }
 
 function handler(req, res) {
