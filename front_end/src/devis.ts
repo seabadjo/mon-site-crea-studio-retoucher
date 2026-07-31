@@ -82,14 +82,14 @@ export function buildDevisPayload(formState: Record<string, unknown>): DevisPayl
   };
 }
 
-function getApiBase(): string {
-  const configuredBase = (window as Window & { CreaStudioApiBase?: string }).CreaStudioApiBase;
+export function resolveApiBase(windowRef: Window = window): string {
+  const configuredBase = (windowRef as Window & { CreaStudioApiBase?: string }).CreaStudioApiBase;
   if (configuredBase) return configuredBase;
-  return window.location.port === '8080' ? 'http://localhost:3000' : '';
+  return windowRef.location.port === '8080' ? 'http://localhost:3000' : '';
 }
 
-export async function submitDevisToBackend(payload: DevisPayload) {
-  const response = await fetch(`${getApiBase()}/api/devis`, {
+export async function submitDevisToBackend(payload: DevisPayload, windowRef: Window = window) {
+  const response = await fetch(`${resolveApiBase(windowRef)}/api/devis`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
@@ -101,4 +101,13 @@ export async function submitDevisToBackend(payload: DevisPayload) {
   }
 
   return data;
+}
+
+if (typeof window !== 'undefined') {
+  (window as Window & { CreaStudioDevis?: Record<string, unknown> }).CreaStudioDevis = {
+    calculateEstimate,
+    buildDevisPayload,
+    submitDevisToBackend,
+    resolveApiBase,
+  };
 }

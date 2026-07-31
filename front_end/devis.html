@@ -183,7 +183,8 @@ nav {
 .range-val { font-size: 22px; font-weight: 700; font-family: 'Syne', sans-serif; color: var(--cream); text-align: center; margin-bottom: 12px; }
 .range-val span { color: var(--orange); }
 input[type=range] {
-  -webkit-appearance: none; width: 100%; height: 3px;
+  appearance: none;
+  width: 100%; height: 3px;
   background: var(--border-2); border-radius: 3px; outline: none;
 }
 input[type=range]::-webkit-slider-thumb {
@@ -407,8 +408,7 @@ input[type=range]:hover::-webkit-slider-thumb { box-shadow: 0 0 0 8px var(--oran
       </div>
 
       <div class="step-nav">
-        <button class="btn-next" onclick="goStep(2)"><a href="connexion.html" class="btn-primary"></a>Continuer →</button>
-        <a href="connexion.html" class="btn-primary"></a>
+        <button class="btn-next" onclick="goStep(2)">Continuer →</button>
       </div>
     </div>
 
@@ -444,7 +444,7 @@ input[type=range]:hover::-webkit-slider-thumb { box-shadow: 0 0 0 8px var(--oran
           <input type="checkbox" name="service">
           <div class="service-pick-icon">📷</div>
           <div class="service-pick-name">Photographie</div>
-          <div class="service-pick-price">À partir de 75 000 FCFA</div>
+          <div class="service-pick-price">À partir de 95 000 FCFA</div>
           <div class="service-pick-check"><svg viewBox="0 0 12 12" fill="none"><polyline points="2 6 5 9 10 3"/></svg></div>
         </div>
         <div class="service-pick" data-service="Vidéographie" data-price="200000" onclick="toggleService(this)">
@@ -458,7 +458,7 @@ input[type=range]:hover::-webkit-slider-thumb { box-shadow: 0 0 0 8px var(--oran
           <input type="checkbox" name="service">
           <div class="service-pick-icon">🎯</div>
           <div class="service-pick-name">Direction Artistique</div>
-          <div class="service-pick-price">À partir de 120 000 FCFA</div>
+          <div class="service-pick-price">À partir de 300 000 FCFA</div>
           <div class="service-pick-check"><svg viewBox="0 0 12 12" fill="none"><polyline points="2 6 5 9 10 3"/></svg></div>
         </div>
       </div>
@@ -466,8 +466,8 @@ input[type=range]:hover::-webkit-slider-thumb { box-shadow: 0 0 0 8px var(--oran
       <div class="field-section">Budget approximatif</div>
       <div class="range-wrap">
         <div class="range-val" id="budgetDisplay">200 000 <span>FCFA</span></div>
-        <input type="range" id="budgetRange" min="50000" max="2000000" step="25000" value="200000" oninput="updateBudget(this.value)">
-        <div class="range-labels"><span>50 000 FCFA</span><span>2 000 000 FCFA</span></div>
+        <input type="range" id="budgetRange" min="50000" max="10000000" step="45000" value="200000" oninput="updateBudget(this.value)">
+        <div class="range-labels"><span>50 000 FCFA</span><span>10 000 000 FCFA</span></div>
       </div>
 
       <div class="field-section">Délai souhaité</div>
@@ -475,7 +475,7 @@ input[type=range]:hover::-webkit-slider-thumb { box-shadow: 0 0 0 8px var(--oran
         <div class="option-item" data-group="delai" data-val="Urgent (< 1 semaine)" onclick="selectOption(this)">
           <div class="option-radio"></div>
           <div class="option-text"><div class="option-name">Urgent</div><div class="option-desc">Moins d'une semaine</div></div>
-          <div class="option-price">+30%</div>
+          <div class="option-price">+35%</div>
         </div>
         <div class="option-item selected" data-group="delai" data-val="Standard (2–4 semaines)" onclick="selectOption(this)">
           <div class="option-radio"></div>
@@ -485,7 +485,7 @@ input[type=range]:hover::-webkit-slider-thumb { box-shadow: 0 0 0 8px var(--oran
         <div class="option-item" data-group="delai" data-val="Flexible (1–3 mois)" onclick="selectOption(this)">
           <div class="option-radio"></div>
           <div class="option-text"><div class="option-name">Flexible</div><div class="option-desc">1 à 3 mois</div></div>
-          <div class="option-price">-10%</div>
+          <div class="option-price">-5%</div>
         </div>
       </div>
 
@@ -514,7 +514,7 @@ input[type=range]:hover::-webkit-slider-thumb { box-shadow: 0 0 0 8px var(--oran
         <div class="option-item" data-group="livrable" data-val="Fichiers sources (Ai, Psd, Figma…)" onclick="toggleMultiOption(this)">
           <div class="option-radio" style="border-radius:3px"></div>
           <div class="option-text"><div class="option-name">Fichiers sources</div><div class="option-desc">Ai, Psd, Figma, Pr, etc.</div></div>
-          <div class="option-price">+15%</div>
+          <div class="option-price">+20%</div>
         </div>
         <div class="option-item selected" data-group="livrable" data-val="Fichiers finaux exportés" onclick="toggleMultiOption(this)">
           <div class="option-radio" style="border-radius:3px"></div>
@@ -524,12 +524,12 @@ input[type=range]:hover::-webkit-slider-thumb { box-shadow: 0 0 0 8px var(--oran
         <div class="option-item" data-group="livrable" data-val="Guide de marque (Charte graphique)" onclick="toggleMultiOption(this)">
           <div class="option-radio" style="border-radius:3px"></div>
           <div class="option-text"><div class="option-name">Charte graphique</div><div class="option-desc">Guide d'utilisation de la marque</div></div>
-          <div class="option-price">+50 000</div>
+          <div class="option-price">+60 000</div>
         </div>
         <div class="option-item" data-group="livrable" data-val="Formation & présentation" onclick="toggleMultiOption(this)">
           <div class="option-radio" style="border-radius:3px"></div>
           <div class="option-text"><div class="option-name">Formation incluse</div><div class="option-desc">Présentation et prise en main</div></div>
-          <div class="option-price">+30 000</div>
+          <div class="option-price">+45 000</div>
         </div>
       </div>
 
@@ -595,7 +595,7 @@ input[type=range]:hover::-webkit-slider-thumb { box-shadow: 0 0 0 8px var(--oran
           <div class="option-radio" style="border-radius:3px" id="cgvRadio"></div>
           <div class="option-text">
             <div class="option-name">J'accepte les conditions générales de vente</div>
-            <div class="option-desc">Le devis est non contractuel. Un acompte de 50% sera demandé à la validation.</div>
+            <div class="option-desc">Le devis est non contractuel. Un acompte de 50% sera demandé à la validation.En cas d'imprevu ou de modifications en dehors du devis une augmentations de 15% sera ajouter </div>
           </div>
         </div>
         <div class="option-item" id="privacyCheck" onclick="togglePrivacy(this)" style="cursor:none;">

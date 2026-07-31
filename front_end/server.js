@@ -18,6 +18,10 @@ function writeTestimonials(data) {
   fs.writeFileSync(testimonialsPath, JSON.stringify(data, null, 2));
 }
 
+function makeReference() {
+  return `REF-${Date.now().toString(36).toUpperCase()}${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
+}
+
 const server = http.createServer((req, res) => {
   const parsedUrl = parse(req.url, true);
   const pathname = parsedUrl.pathname;
@@ -64,10 +68,31 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (pathname === '/api/devis' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      try {
+        const payload = JSON.parse(body);
+        res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+        res.end(JSON.stringify({
+          success: true,
+          ref: makeReference(),
+          message: 'Devis reçu',
+          payload,
+        }));
+      } catch (error) {
+        res.writeHead(400, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+        res.end(JSON.stringify({ error: 'Invalid payload' }));
+      }
+    });
+    return;
+  }
+
   res.writeHead(404, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
   res.end(JSON.stringify({ error: 'Not found' }));
 });
 
-server.listen(3001, () => {
-  console.log('Backend testimonials running on http://localhost:3001');
+server.listen(3000, () => {
+  console.log('Backend testimonials running on http://localhost:3000');
 });

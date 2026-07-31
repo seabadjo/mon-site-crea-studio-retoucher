@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.calculateEstimate = calculateEstimate;
 exports.buildDevisPayload = buildDevisPayload;
+exports.resolveApiBase = resolveApiBase;
 exports.submitDevisToBackend = submitDevisToBackend;
 function calculateEstimate(services, livrables, urgentMult = 1, flexibleDisc = 1) {
     let base = services.reduce((sum, service) => sum + service.price, 0);
@@ -46,14 +47,14 @@ function buildDevisPayload(formState) {
         final_price: finalPrice,
     };
 }
-function getApiBase() {
-    const configuredBase = window.CreaStudioApiBase;
+function resolveApiBase(windowRef = window) {
+    const configuredBase = windowRef.CreaStudioApiBase;
     if (configuredBase)
         return configuredBase;
-    return window.location.port === '8080' ? 'http://localhost:3000' : '';
+    return windowRef.location.port === '8080' ? 'http://localhost:3000' : '';
 }
-async function submitDevisToBackend(payload) {
-    const response = await fetch(`${getApiBase()}/api/devis`, {
+async function submitDevisToBackend(payload, windowRef = window) {
+    const response = await fetch(`${resolveApiBase(windowRef)}/api/devis`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -63,4 +64,12 @@ async function submitDevisToBackend(payload) {
         throw new Error(data.error || 'Impossible d’envoyer le devis.');
     }
     return data;
+}
+if (typeof window !== 'undefined') {
+    window.CreaStudioDevis = {
+        calculateEstimate,
+        buildDevisPayload,
+        submitDevisToBackend,
+        resolveApiBase,
+    };
 }
